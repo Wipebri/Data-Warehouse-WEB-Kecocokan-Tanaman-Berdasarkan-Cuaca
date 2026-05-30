@@ -1,144 +1,65 @@
-# AgroSense - Smart Farming Intelligence
+# Implementasi Business Intelligence Berbasis Data Warehouse untuk Sistem Rekomendasi Kecocokan Tanaman Berdasarkan Kondisi Cuaca Menggunakan Algoritma Random Forest
 
-Proyek ini adalah aplikasi fullstack berbasis React + Express + Node.js yang terintegrasi dengan Machine Learning model untuk analisis pertanian dan prediksi kecocokan tanaman berbasis cuaca real-time dari BMKG.
-
-## 📂 Struktur Folder
-
-```
-web/
-├── backend/               # Server Node.js/Express, API endpoints
-│   ├── index.js           # Entry point Express server
-│   ├── routes/            # Route handlers
-│   │   └── prediction.js  # API prediksi & data tanaman
-│   ├── services/
-│   │   ├── ml-service.js  # Bridge ke predict.py (spawn)
-│   │   └── bmkg.js        # Fetch data cuaca dari BMKG
-│   ├── .env               # Environment variables
-│   └── package.json
-│
-├── frontend/              # Aplikasi React + Vite + Tailwind
-│   ├── src/
-│   │   ├── App.tsx        # Main app dengan sections
-│   │   ├── components/    # Komponen React
-│   │   │   ├── Navbar.tsx
-│   │   │   ├── Hero.tsx
-│   │   │   ├── HowItWorks.tsx
-│   │   │   ├── FeatureCards.tsx
-│   │   │   ├── AgroInsights.tsx
-│   │   │   ├── CropChecker.tsx    # Form cek kecocokan tanaman
-│   │   │   ├── CTABanner.tsx
-│   │   │   └── Footer.tsx
-│   │   └── index.css
-│   └── package.json
-│
-└── data-analysis/         # Data science & ML models
-    ├── data/
-    │   ├── Crop_recommendation.csv  # Dataset 22 jenis tanaman
-    │   └── crop_yield_dataset.csv   # Dataset hasil panen
-    ├── models/
-    │   ├── crop_model.pkl           # Model ML (klasifikasi)
-    │   ├── scaler.pkl               # StandardScaler
-    │   └── label_encoder.pkl        # LabelEncoder
-    └── predict.py                   # Script prediksi (stdin/stdout)
-```
+Projek ini merupakan bagian dari Tugas Akhir/Projek yang mengintegrasikan proses **Data Engineering (ETL & Data Warehouse)** dan **Data Science (Machine Learning)** untuk membangun sistem rekomendasi kecocokan tanaman berdasarkan parameter lingkungan (cuaca dan kondisi tanah). Sistem ini dirancang untuk mendasari sistem analisis Business Intelligence serta aplikasi berbasis web.
 
 ---
 
-## 🧠 Fitur Utama: Crop Suitability Checker
-
-Fitur ini memungkinkan user mengecek apakah suatu tanaman **cocok ditanam** di lokasi tertentu berdasarkan **cuaca real-time dari BMKG**.
-
-### Alur Sistem
-
-```
-1. User pilih tanaman (dropdown dari 22 jenis)
-2. User pilih lokasi/kota (dropdown)
-3. Backend fetch cuaca real-time dari BMKG API gratis
-4. Data cuaca + soil default → masuk ke model ML
-5. Model prediksi → output "COCOK" / "TIDAK COCOK"
-```
-
-### Input Model (Crop Recommendation)
-
-| Fitur | Sumber |
-|-------|--------|
-| N, P, K | Default dari dataset |
-| pH tanah | Default (6.5) |
-| Temperature | BMKG API (suhu lokasi real-time) |
-| Humidity | BMKG API (kelembaban) |
-| Rainfall | BMKG API (curah hujan) |
-
-### API Endpoints Backend
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| GET | `/api/health` | Cek status server |
-| GET | `/api/crops` | Daftar 22 jenis tanaman dari model |
-| GET | `/api/locations` | Daftar kota Indonesia |
-| POST | `/api/predict/check` | Prediksi kecocokan {crop, location} |
+## 📌 Anggota Tim / Penulis
+* **Taufik Ramadhani** (2409116001)
+* **Adella Putri** (2409116006)
+* **Dwi Pebriyanto Pradana** (2409116012)
+* *Fakultas Teknik, Universitas Mulawarman, Samarinda (2026)*
 
 ---
 
-## 🌐 Sumber Data
-
-### BMKG API (Gratis)
-Data cuaca real-time per kota di Indonesia dari BMKG.
-- Basis URL: `https://data.bmkg.go.id/`
-- Data yang diambil: suhu, kelembaban, curah hujan, kondisi cuaca
-- Tidak perlu API key
-
-### Data Soil (Default)
-N, P, K, dan pH tanah menggunakan nilai rata-rata dari dataset crop recommendation. User juga bisa menginput nilai soil sendiri jika ingin lebih akurat.
+## 📂 Sumber Dataset (Dataset Sources)
+Projek ini menggabungkan dan menyelaraskan dua sumber dataset publik dari Kaggle untuk memperoleh parameter cuaca, kondisi tanah, dan jenis komoditas tanaman:
+1. **Crop Recommendation Dataset** 🔗 [Kaggle Link](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset)  
+   *Menyediakan data parameter lingkungan seperti temperatur, kelembapan, dan pH untuk rekomendasi tanaman.*
+2. **Crop Yield and Environmental Factors (2014-2023)** 🔗 [Kaggle Link](https://www.kaggle.com/datasets/madhankumar789/crop-yield-and-environmental-factors-2014-2023)  
+   *Menyediakan data historis komoditas perkebunan, tipe tanah, serta faktor lingkungan terkait.*
 
 ---
 
-## 🛠️ Prasyarat
+## 🚀 Google Colab Notebooks
+Seluruh eksperimen data engineering dan machine learning dilakukan menggunakan Google Colab yang terbagi menjadi dua tahap utama:
 
-- **Node.js** v18+ & npm
-- **Python** 3.8+ (untuk `predict.py`)
-- **Library Python:** `pandas`, `scikit-learn`, `joblib`
+### 1. Tahap ETL & Perancangan Data Warehouse
+Notebook ini berfokus pada ekstraksi data mentah, pengecekan kualitas data (missing values, duplikasi, pencilan/outliers menggunakan metode IQR), transformasi penyelarasan atribut, penyaringan 8 komoditas spesifik, serta pemodelan ke dalam struktur *Star Schema*.
+* **Tautan Akses:** [Google Colab - ETL & Data Warehouse](https://colab.research.google.com/drive/179DlLO9-2gWVLeMu8yzDeiRrIaMMGMBt?usp=sharing)
 
-Install Python dependencies:
-```bash
-pip install pandas scikit-learn joblib
-```
-
----
-
-## 👨‍💻 Cara Memulai
-
-### 1. Backend
-```bash
-cd backend
-npm install
-node index.js
-```
-Server berjalan di `http://localhost:5000`
-
-### 2. Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-App berjalan di `http://localhost:5173`
-
-### 3. Python ML Service
-Test predict.py langsung:
-```bash
-cd data-analysis
-echo '{"N": 90, "P": 42, "K": 43, "temperature": 25, "humidity": 80, "ph": 6.5, "rainfall": 200}' | python predict.py
-```
+### 2. Tahap Pelatihan Model Machine Learning
+Notebook ini melakukan pemuatan data bersih hasil ETL (`crop_dataset.csv`), penyeimbangan data (*random downsampling* menjadi masing-masing 100 sampel per kelas), pra-pemrosesan (*Label Encoding* dan *StandardScaler*), pelatihan menggunakan algoritma **Random Forest Classifier**, evaluasi performa (Akurasi, Precision, Recall, F1-Score), serta ekspor artefak model menggunakan `joblib`.
+* **Tautan Akses:** [Google Colab - Machine Learning Training](https://colab.research.google.com/drive/1jbOIOkiQ26feMHlsJOzu-le-JBbd_fMv?usp=sharing)
 
 ---
 
-## 📊 Dataset
+## 🏗️ Arsitektur & Pipeline Sistem
 
-### Crop_recommendation.csv
-- 2201 baris, 22 jenis tanaman
-- Fitur: N, P, K, temperature, humidity, ph, rainfall
-- Tanaman: rice, maize, chickpea, kidneybeans, pigeonpeas, mothbeans, mungbean, blackgram, lentil, pomegranate, banana, mango, grapes, watermelon, muskmelon, apple, orange, papaya, coconut, cotton, jute, coffee
+### A. Data Engineering (ETL & Star Schema)
+Proses transformasi menghasilkan sebuah desain **Data Warehouse (Star Schema)** yang optimal untuk proses query analitis (BI):
+* **Tabel Dimensi:**
+  * `dim_crop`: Menyimpan informasi unik mengenai jenis tanaman (`crop_id`, `crop_name`).
+  * `dim_weather`: Menyimpan kombinasi parameter cuaca (`weather_id`, `temperature`, `humidity`).
+  * `dim_soil`: Menyimpan parameter kondisi tanah (`soil_id`, `ph`).
+* **Tabel Fakta:**
+  * `fact_prediction`: Tabel sentral yang menghubungkan ketiga dimensi di atas menggunakan *foreign key* (`crop_id`, `weather_id`, `soil_id`) untuk pencatatan histori data prediksi dan rekomendasi.
 
-### crop_yield_dataset.csv
-- 36521 baris
-- Fitur: Date, Crop_Type, Soil_Type, Soil_pH, Temperature, Humidity, Wind_Speed, N, P, K, Crop_Yield, Soil_Quality
+### B. Machine Learning Pipeline
+Model klasifikasi dibangun menggunakan algoritma **Random Forest** dengan tahapan sebagai berikut:
+1. **Data Balancing**: Mengatasi *imbalance class* agar distribusi data tiap jenis tanaman sama rata.
+2. **Feature Engineering**: Standardisasi fitur numerik menggunakan Z-score scaling (*StandardScaler*).
+3. **Splitting**: Pembagian proporsi data menjadi 80% Training Set dan 20% Test Set.
+4. **Model Export**: Hasil pelatihan diekspor ke dalam file berekstensi `.pkl` untuk diintegrasikan ke sisi Web Application:
+   * `crop_model.pkl` (Model utama Random Forest)
+   * `scaler.pkl` (Objek standardisasi fitur)
+   * `label_encoder.pkl` (Objek pemetaan teks ke angka)
+
+---
+
+## 🛠️ Teknologi & Library yang Digunakan
+* **Bahasa Pemrograman:** Python 3
+* **Analisis & Manipulasi Data:** `pandas`, `numpy`
+* **Machine Learning:** `scikit-learn` (RandomForestClassifier, train_test_split, StandardScaler, LabelEncoder)
+* **Model Serialization:** `joblib`
+* **Platform Eksekusi:** Google Colab / Jupyter Notebook
