@@ -10,6 +10,7 @@ __pycache__/
 env/
 venv/
 ENV/
+README.md
 
 # Data and Models
 data-analysis/data/*.csv
