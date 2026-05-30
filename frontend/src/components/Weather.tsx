@@ -254,7 +254,7 @@ export default function Weather() {
 
   const globalMin = Math.min(...forecastDays.map(d => d.temperatureMin ?? d.temperature));
   const globalMax = Math.max(...forecastDays.map(d => d.temperatureMax ?? d.temperature));
-  const globalRange = globalMax - globalMin || 1;
+  globalMax - globalMin || 1;
 
   const chartEmpty = !hourlyChart.length;
 
